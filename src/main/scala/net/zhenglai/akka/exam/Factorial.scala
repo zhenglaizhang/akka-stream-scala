@@ -48,6 +48,8 @@ object Factorial extends App {
       .runForeach(println)
 
   Thread.sleep(10000)
-  system.terminate()
+  done.onComplete {
+    _ => system.terminate()
+  }
   println("DONE")
 }

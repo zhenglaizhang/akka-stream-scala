@@ -46,10 +46,15 @@ object webs extends App {
   val route =
     path("hello") {
       get {
-        complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "<h1>Say hello to akka-http</h1>"))
-        //        complete {
-        //          <h1>Hello Akka Http</h1>
-        //        }
+        pathSingleSlash {
+          complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "<h1>Say hello to akka-http</h1>"))
+        } ~
+          path("ping") {
+            complete("PONG")
+          } ~
+          path("crash") {
+            sys.error("BOOM!")
+          }
       }
     } ~
       get {
