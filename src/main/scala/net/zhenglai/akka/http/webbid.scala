@@ -5,18 +5,15 @@ import akka.http.scaladsl.Http
 import akka.pattern.ask
 import akka.stream.ActorMaterializer
 import scala.language.postfixOps
-import akka.Done
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.model.{ContentTypes, HttpEntity, StatusCodes}
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 import spray.json.DefaultJsonProtocol._
 import scala.io.StdIn
 import scala.concurrent.Future
-import scala.util.Random
 import scala.concurrent.duration._
 
-import akka.stream.scaladsl.Source
-import akka.util.{ByteString, Timeout}
+import akka.util.{Timeout}
 
 
 object webbid extends App {

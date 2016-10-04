@@ -38,7 +38,7 @@ object webs extends App {
       sys.error("BOOM!")
     case r: HttpRequest =>
       r.discardEntityBytes() // import to drain incoming HTTP entity
-      HttpResponse(404, entity = "Unknown resource!")
+      HttpResponse(StatusCodes.NotFound, entity = "Unknown resource!")
   }
 
   val bindingFuture = Http().bindAndHandleSync(requestHandler, "localhost", 8080)
