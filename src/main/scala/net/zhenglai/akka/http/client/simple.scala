@@ -14,7 +14,7 @@ import akka.stream.scaladsl.{FileIO, Framing}
 import akka.util.ByteString
 
 object simple extends App {
-  implicit val system = ActorSystem()
+  implicit val system       = ActorSystem()
   implicit val materializer = ActorMaterializer()
 
   val responseFuture: Future[HttpResponse] =
@@ -28,5 +28,9 @@ object simple extends App {
       .via(Framing.delimiter(ByteString("\n"), maximumFrameLength = 256))
       .map(transformEachLine)
       .runWith(FileIO.toPath(new File("/tmp/example.out").toPath))
-  }).onComplete(_ => system.terminate())
+  }).onComplete { _ =>
+    materializer.shutdown(); // But it is not a shutdown. It does not shut down anything it just stops accepting newly materialized streams. The running streams can still go on forever.
+
+    system.terminate()
+  }
 }
