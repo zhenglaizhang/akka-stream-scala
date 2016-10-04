@@ -1,12 +1,11 @@
 package net.zhenglai.akka.exam
 
+import scala.util.{Failure, Success}
+
 import akka.actor.ActorSystem
-import akka.pattern.ask
 import akka.stream.ActorMaterializer
-import akka.stream.scaladsl.{ Flow, Sink, Source, Tcp }
+import akka.stream.scaladsl.{Flow, Sink, Source, Tcp}
 import akka.util.ByteString
-import scala.concurrent.duration._
-import scala.util.{ Failure, Success }
 
 object TcpEcho {
 
@@ -77,10 +76,10 @@ object TcpEcho {
       case Success(result) =>
         println(s"Result: " + result.utf8String)
         println("Shutting down client")
-        system.shutdown()
+        system.terminate()
       case Failure(e) =>
         println("Failure: " + e.getMessage)
-        system.shutdown()
+        system.terminate()
     }
   }
 }

@@ -2,14 +2,16 @@ package net.zhenglai.akka.exam
 
 import java.nio.file.Paths
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-
-import akka.{Done, NotUsed}
-import akka.actor.ActorSystem
 import scala.concurrent.duration._
-import akka.stream.{ActorMaterializer, IOResult, ThrottleMode}
+import scala.language.postfixOps
+
+import akka.actor.ActorSystem
 import akka.stream.scaladsl.{FileIO, Flow, Keep, Sink, Source}
+import akka.stream.{ActorMaterializer, IOResult, ThrottleMode}
 import akka.util.ByteString
+import akka.{Done, NotUsed}
 
 object Factorial extends App {
 
@@ -47,7 +49,7 @@ object Factorial extends App {
       .throttle(1, 1 second, 1, ThrottleMode.shaping)
       .runForeach(println)
 
-  Thread.sleep(10000)
+  Thread.sleep(1000)
   done.onComplete {
     _ => system.terminate()
   }
