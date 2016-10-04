@@ -15,6 +15,7 @@ object MaterializedValue extends App {
   val source: Source[Int, Promise[Option[Int]]] = Source.maybe[Int]
 
   //  val flow: Flow[Int, Int, Cancellable] = Flow[Int].throttle(1, 1 second, 1, ThrottleMode.shaping).map(_ * 2)
+  /*
   val flow: Flow[Int, Int, Cancellable] = _
 
   val sink: Sink[Int, Future[Int]] = Sink.head[Int]
@@ -37,5 +38,5 @@ object MaterializedValue extends App {
   val r10: RunnableGraph[(Cancellable, Future[Int])] =
     source.viaMat(flow)(Keep.right).toMat(sink)(Keep.both):w
 
-
+*/
 }
