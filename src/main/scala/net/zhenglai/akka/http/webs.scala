@@ -2,16 +2,18 @@ package net.zhenglai.akka.http
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
-import akka.http.scaladsl.model._
 import akka.stream.ActorMaterializer
 import akka.Done
-import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.model.{ContentTypes, HttpEntity, StatusCodes}
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 import spray.json.DefaultJsonProtocol._
 import scala.io.StdIn
 import scala.concurrent.Future
+import scala.util.Random
+
+import akka.stream.scaladsl.Source
+import akka.util.ByteString
 
 object webs extends App {
 
@@ -37,6 +39,9 @@ object webs extends App {
 
   // needed for the future flatMap/onComplete in the end
   implicit val executionContext = system.dispatcher
+
+  // streams are re-usable so we can define it here and use it for every request
+  val numbers = Source.fromIterator(() => Iterator.continually(Random.nextInt()))
 
   val route =
     path("hello") {
@@ -69,12 +74,20 @@ object webs extends App {
       } ~
       path("random") {
         get {
-          complete()
+          complete(
+            HttpEntity(
+              ContentTypes.`text/plain(UTF-8)`,
+              // transform each number to a chunk of bytes
+              numbers.map(n => ByteString(s"$n\n"))
+            )
+          )
         }
       }
 
   val bindingFuture = Http().bindAndHandle(route, "localhost", 8080)
   println(s"Server online at http://localhost:8080\nPress enter to stop...")
-  StdIn.readLine()
-  bindingFuture.flatMap(_.unbind()).onComplete(_ => system.terminate())
+  StdIn.readLine() // let it run until user presses return
+  bindingFuture
+    .flatMap(_.unbind()) // trigger unbinding from the port
+    .onComplete(_ => system.terminate()) // and shutdown when done
 }
